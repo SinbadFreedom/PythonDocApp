@@ -4,7 +4,7 @@ import {
     WebView
     } from 'react-native';
 
-class PythonDoc extends Component {
+class PythonDocApp extends Component {
     render() {
         return (
             <WebView
@@ -14,4 +14,4 @@ class PythonDoc extends Component {
     }
 }
 
-AppRegistry.registerComponent('PythonDoc', () => PythonDoc);
+AppRegistry.registerComponent('PythonDocApp', () => PythonDocApp);
