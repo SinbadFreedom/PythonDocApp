@@ -1,15 +1,27 @@
 import React, {Component} from 'react';
 import {
     AppRegistry,
-    WebView
-    } from 'react-native';
+    WebView,
+    StatusBar,
+    StyleSheet,
+    View
+} from 'react-native';
+
+const styles = StyleSheet.create({
+                                     container: {
+                                         flex: 1,
+                                         backgroundColor: '#1FB9FF',
+                                         borderWidth:0
+                                     },
+                                 });
 
 class PythonDocApp extends Component {
     render() {
         return (
-            <WebView
-                source={require("./html/index.html")}
-                />
+            <View style={styles.container}>
+                <StatusBar hidden={true}></StatusBar>
+                <WebView style={styles.webView} source={require("./html/index.html")}/>
+            </View>
         );
     }
 }
