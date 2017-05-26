@@ -20,7 +20,7 @@ class PythonDocApp extends Component {
         return (
             <View style={styles.container}>
                 <StatusBar hidden={true}></StatusBar>
-                <WebView style={styles.webView} source={require("./html/index.html")}/>
+                <WebView source={require("./html/index.html")}/>
             </View>
         );
     }

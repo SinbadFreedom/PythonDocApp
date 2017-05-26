@@ -65,7 +65,7 @@ body {
 
 
 div.document {
-    width: 940px;
+    width: 100%;
     /*margin: 30px auto 0 auto;*/
 }
 
@@ -78,11 +78,11 @@ div.bodywrapper {
     margin: 0 0 0 220px;
 }
 
-div.sphinxsidebar {
-    width: 220px;
-    font-size: 14px;
-    line-height: 1.5;
-}
+/*div.sphinxsidebar {*/
+    /*!*width: 220px;*!*/
+    /*font-size: 14px;*/
+    /*line-height: 1.5;*/
+/*}*/
 
 hr {
     border: 1px solid #B1B4B6;
@@ -99,7 +99,7 @@ div.body > .section {
 }
 
 div.footer {
-    width: 940px;
+    width: 100%;
     margin: 20px auto 30px auto;
     font-size: 14px;
     color: #888;
@@ -443,10 +443,10 @@ table.field-list p {
     margin-bottom: 0.8em;
 }
 
-table.footnote td.label {
-    width: .1px;
-    padding: 0.3em 0 0.3em 0.5em;
-}
+/*table.footnote td.label {*/
+    /*width: .1px;*/
+    /*padding: 0.3em 0 0.3em 0.5em;*/
+/*}*/
 
 table.footnote td {
     padding: 0.3em 0.5em;
@@ -609,9 +609,9 @@ a:hover tt, a:hover code {
     div.sphinxsidebar {
         display: block;
         float: none;
-        width: 102.5%;
-        margin: 50px -30px -20px -30px;
-        padding: 10px 20px;
+        /*width: 100%;*/
+        /*margin: 50px -30px -20px -30px;*/
+        /*padding: 10px 20px;*/
         background: #333;
         color: #FFF;
     }
