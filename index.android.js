@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
                                      container: {
                                          flex: 1,
                                          backgroundColor: '#1FB9FF',
-                                         borderWidth:0
+                                         borderWidth: 0
                                      },
                                  });
 
@@ -20,7 +20,8 @@ class PythonDocApp extends Component {
         return (
             <View style={styles.container}>
                 <StatusBar hidden={true}></StatusBar>
-                <WebView source={require("./html/index.html")}/>
+                <WebView source={ {uri : 'http://139.59.45.254/html/'}}/>
+                {/*<WebView source={require("./html/index.html")}/>*/}
             </View>
         );
     }
