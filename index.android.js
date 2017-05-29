@@ -8,7 +8,8 @@ import {
     StyleSheet,
     View,
     Image,
-    ViewPagerAndroid
+    ViewPagerAndroid,
+    BackHandler
 } from 'react-native';
 
 import {ViewPagerScrollState} from 'ViewPagerAndroid';
@@ -87,7 +88,10 @@ var PythonDocApp = React.createClass({
                                              pages.push(
                                                  <View style={styles.container}>
                                                      <StatusBar hidden={true}></StatusBar>
-                                                     <WebView source={ {uri : 'http://139.59.45.254/html/'}}/>
+                                                     <WebView source={ {uri : 'http://139.59.45.254/html/'}}
+                                                              onNavigationStateChange={(event) =>{console.log("onNavigationStateChange: " + event)}}
+                                                              onMessage={(event) => {console.log(" onMessage " + event.nativeEvent)}}>
+                                                     </WebView>
                                                      {/*<WebView source={require("./html/index.html")}/>*/}
                                                  </View>
                                              );
@@ -124,5 +128,18 @@ var styles = StyleSheet.create({
                                        flex: 1,
                                    },
                                });
+
+BackHandler.addEventListener('hardwareBackPress', function() {
+    console.log("-----------------");
+    // this.onMainScreen and this.goBack are just examples, you need to use your own implementation here
+    // Typically you would use the navigator here to go to the last state.
+    // return true;
+    // if (!this.onMainScreen()) {
+    //     this.goBack();
+    //     return true;
+    // }
+    // return false;
+    return true;
+});
 
 AppRegistry.registerComponent('PythonDocApp', () => PythonDocApp);
