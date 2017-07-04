@@ -15,12 +15,7 @@ import {
     PermissionsAndroid
 } from 'react-native';
 
-import { StackNavigator } from 'react-navigation'
 import RNFetchBlob from 'react-native-fetch-blob'
-
-
-//var FileTransfer = require('@remobile/react-native-file-transfer');
-
 
 const styles = StyleSheet.create({
     container: {
