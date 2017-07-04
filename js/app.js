@@ -1,3 +1,5 @@
+'use strict';
+
 import React, {Component} from 'react';
 import {
     AppRegistry,
@@ -6,8 +8,19 @@ import {
     StyleSheet,
     View,
     BackHandler,
-    ToastAndroid
+    ToastAndroid,
+    Text,
+    Button,
+    ActivityIndicator,
+    PermissionsAndroid
 } from 'react-native';
+
+import { StackNavigator } from 'react-navigation'
+import RNFetchBlob from 'react-native-fetch-blob'
+
+
+//var FileTransfer = require('@remobile/react-native-file-transfer');
+
 
 const styles = StyleSheet.create({
     container: {
@@ -17,29 +30,43 @@ const styles = StyleSheet.create({
     },
 });
 
+
 const WEB_VIEW_REF = "webView";
 const WEB_ROOT = "http://apetools.cn/html_python/";
-
-const STAGE_STATE_0 = 0;
-const STAGE_STATE_1 = 1;
-const STAGE_STATE_2 = 2;
+const PYTHON_DOC_APP_BUNDLE = "http://apetools.cn/bundle/PythonDocApp/index.android.bundle.zip";
 
 class PythonDocApp extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {};
-
-        //// 每1000毫秒对showText状态做一次取反操作
-        //setInterval(() => {
-        //    this.setState(previousState => {
-        //        return {showText: !previousState.showText};
-        //    });
-        //}, 1000);
+        this.state = {
+            isLoading: true
+        };
     }
 
     componentDidMount() {
         BackHandler.addEventListener('hardwareBackPress', this.backHandler);
+        this.requestCameraPermission();
+        let dirs = RNFetchBlob.fs.dirs.SDCardDir + '/PythonDocApp/index.android.bundle.zip';
+        console.log("---------------dirs-------- : " + dirs);
+        RNFetchBlob
+            .config({
+                // response data will be saved to this path if it has access right.
+                fileCache : true,
+                path: dirs
+            })
+            .fetch('GET', PYTHON_DOC_APP_BUNDLE, {
+                //some headers ..
+            })
+            .then((res) => {
+                // the path should be dirs.DocumentDir + 'path-to-file.anything'
+                console.log('The file saved to ', res.path());
+                this.setState({isLoading: false}, function () {
+                    // do something with new state
+                    console.log("-----componentDidMount----4");
+                });
+            })
+
     }
 
     componentWillUnmount() {
@@ -61,7 +88,33 @@ class PythonDocApp extends Component {
         }
     };
 
+    requestCameraPermission = async() => {
+        try {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+                {
+                    'title': '需要读写权限',
+                    'message': '启禀皇上:本应用需要存储权限存储数据'
+                }
+            );
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                console.log("You can use WRITE_EXTERNAL_STORAGE")
+            } else {
+                console.log("WRITE_EXTERNAL_STORAGE permission denied")
+            }
+        } catch (err) {
+            console.warn(err)
+        }
+    };
+
     render() {
+        if (this.state.isLoading) {
+            return (
+                <View style={{flex: 1, paddingTop: 20}}>
+                    <ActivityIndicator />
+                </View>
+            );
+        }
         return (
             <View style={styles.container}>
                 <StatusBar hidden={true}></StatusBar>
@@ -77,14 +130,8 @@ class PythonDocApp extends Component {
     onNavigationStateChange(navState) {
         this.setState({
             backButtonEnabled: navState.canGoBack
-            //forwardButtonEnabled: navState.canGoForward,
-            //url: navState.url,
-            //status: navState.title,
-            //loading: navState.loading,
-            //scalesPageToFit: true
         });
     }
-
 }
 
 AppRegistry.registerComponent('PythonDocApp', () => PythonDocApp);
