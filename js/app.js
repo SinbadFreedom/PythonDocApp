@@ -12,7 +12,8 @@ import {
     Text,
     Button,
     ActivityIndicator,
-    PermissionsAndroid
+    PermissionsAndroid,
+    Platform
 } from 'react-native';
 
 import RNFetchBlob from 'react-native-fetch-blob'
@@ -40,14 +41,16 @@ class PythonDocApp extends Component {
     }
 
     componentDidMount() {
-        BackHandler.addEventListener('hardwareBackPress', this.backHandler);
-        this.requestCameraPermission();
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', this.backHandler);
+            this.requestAndroidPermission();
+        }
         let dirs = RNFetchBlob.fs.dirs.SDCardDir + '/PythonDocApp/index.android.bundle.zip';
         console.log("---------------dirs-------- : " + dirs);
         RNFetchBlob
             .config({
                 // response data will be saved to this path if it has access right.
-                fileCache : true,
+                fileCache: true,
                 path: dirs
             })
             .fetch('GET', PYTHON_DOC_APP_BUNDLE, {
@@ -61,11 +64,12 @@ class PythonDocApp extends Component {
                     console.log("-----componentDidMount----4");
                 });
             })
-
     }
 
     componentWillUnmount() {
-        BackHandler.removeEventListener('hardwareBackPress', this.backHandler);
+        if (Platform.OS === 'android') {
+            BackHandler.removeEventListener('hardwareBackPress', this.backHandler);
+        }
     }
 
     backHandler = () => {
@@ -83,7 +87,7 @@ class PythonDocApp extends Component {
         }
     };
 
-    requestCameraPermission = async() => {
+    requestAndroidPermission = async() => {
         try {
             const granted = await PermissionsAndroid.request(
                 PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
