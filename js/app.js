@@ -26,12 +26,14 @@ const styles = StyleSheet.create({
     },
 });
 
-
 const WEB_VIEW_REF = "webView";
 const WEB_ROOT = "http://apetools.cn/html_python/";
-const PYTHON_DOC_APP_BUNDLE = "http://apetools.cn/bundle/PythonDocApp/index.android.bundle.zip";
 
-class PythonDocApp extends Component {
+const BUNDLE_VERSION = '1.0';
+const APP_PACKAGE_NAME = 'PythonDocApp';
+const PYTHON_DOC_APP_BUNDLE = "http://apetools.cn/bundle/" + APP_PACKAGE_NAME + "/" + Platform.OS + "/" + BUNDLE_VERSION + "/" + "index.android.bundle";
+
+class DocApp extends Component {
 
     constructor(props) {
         super(props);
@@ -45,8 +47,9 @@ class PythonDocApp extends Component {
             BackHandler.addEventListener('hardwareBackPress', this.backHandler);
             this.requestAndroidPermission();
         }
-        let dirs = RNFetchBlob.fs.dirs.SDCardDir + '/PythonDocApp/index.android.bundle.zip';
+        let dirs = RNFetchBlob.fs.dirs.SDCardDir + '/' + APP_PACKAGE_NAME + '/index.android.bundle';
         console.log("---------------dirs-------- : " + dirs);
+        console.log("---------------PYTHON_DOC_APP_BUNDLE-------- : " + PYTHON_DOC_APP_BUNDLE);
         RNFetchBlob
             .config({
                 // response data will be saved to this path if it has access right.
@@ -61,7 +64,6 @@ class PythonDocApp extends Component {
                 console.log('The file saved to ', res.path());
                 this.setState({isLoading: false}, function () {
                     // do something with new state
-                    console.log("-----componentDidMount----4");
                 });
             })
     }
@@ -133,4 +135,4 @@ class PythonDocApp extends Component {
     }
 }
 
-AppRegistry.registerComponent('PythonDocApp', () => PythonDocApp);
+AppRegistry.registerComponent(APP_PACKAGE_NAME, () => DocApp);
