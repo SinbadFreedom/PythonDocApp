@@ -7,17 +7,12 @@ import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import okhttp3.MediaType;
+import okhttp3.ResponseBody;
+import okio.*;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-
-import okhttp3.MediaType;
-import okhttp3.ResponseBody;
-import okio.Buffer;
-import okio.BufferedSource;
-import okio.Okio;
-import okio.Source;
-import okio.Timeout;
 
 /**
  * Created by wkh237 on 2016/7/11.
@@ -63,19 +58,18 @@ public class RNFetchBlobDefaultResp extends ResponseBody {
         @Override
         public long read(Buffer sink, long byteCount) throws IOException {
 
-            long read =  mOriginalSource.read(sink, byteCount);
+            long read = mOriginalSource.read(sink, byteCount);
             bytesRead += read > 0 ? read : 0;
             RNFetchBlobProgressConfig reportConfig = RNFetchBlobReq.getReportProgress(mTaskId);
             long cLen = contentLength();
-            if(reportConfig != null && cLen != 0 && reportConfig.shouldReport(bytesRead/contentLength())) {
+            if (reportConfig != null && cLen != 0 && reportConfig.shouldReport(bytesRead / contentLength())) {
                 WritableMap args = Arguments.createMap();
                 args.putString("taskId", mTaskId);
                 args.putString("written", String.valueOf(bytesRead));
                 args.putString("total", String.valueOf(contentLength()));
-                if(isIncrement) {
+                if (isIncrement) {
                     args.putString("chunk", sink.readString(Charset.defaultCharset()));
-                }
-                else {
+                } else {
                     args.putString("chunk", "");
                 }
 

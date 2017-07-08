@@ -1,7 +1,8 @@
 package com.pythondocapp;
 
 import android.app.Application;
-import android.os.Environment;
+import android.content.Context;
+import android.util.Log;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
@@ -23,7 +24,9 @@ public class MainApplication extends Application implements ReactApplication {
 
         @Override
         protected String getJSBundleFile() {
-            String jsBundleFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/PythonDocApp" + "/index.android.bundle";
+            Context context = getApplicationContext();
+            String jsBundleFile = context.getExternalFilesDir(null).getPath() + "/index.android.bundle";
+            Log.e("jsBundleFile: ", jsBundleFile);
             File file = new File(jsBundleFile);
             return file != null && file.exists() ? jsBundleFile : null;
         }

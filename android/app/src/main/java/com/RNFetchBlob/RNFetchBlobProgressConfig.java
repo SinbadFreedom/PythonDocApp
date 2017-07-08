@@ -8,7 +8,9 @@ public class RNFetchBlobProgressConfig {
     public enum ReportType {
         Upload,
         Download
-    };
+    }
+
+    ;
 
     long lastTick = 0;
     int tick = 0;
@@ -26,10 +28,10 @@ public class RNFetchBlobProgressConfig {
 
     public boolean shouldReport(float progress) {
         boolean checkCount = true;
-        if(count > 0 && progress > 0)
-            checkCount = Math.floor(progress*count)> tick;
-        boolean result = (System.currentTimeMillis() - lastTick> interval) && enable && checkCount;
-        if(result) {
+        if (count > 0 && progress > 0)
+            checkCount = Math.floor(progress * count) > tick;
+        boolean result = (System.currentTimeMillis() - lastTick > interval) && enable && checkCount;
+        if (result) {
             tick++;
             lastTick = System.currentTimeMillis();
         }

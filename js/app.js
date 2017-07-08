@@ -47,7 +47,7 @@ class DocApp extends Component {
             BackHandler.addEventListener('hardwareBackPress', this.backHandler);
             this.requestAndroidPermission();
         }
-        let dirs = RNFetchBlob.fs.dirs.SDCardDir + '/' + APP_PACKAGE_NAME + '/index.android.bundle';
+        let dirs = RNFetchBlob.fs.dirs.SDCardApplicationDir + '/files/index.android.bundle';
         console.log("---------------dirs-------- : " + dirs);
         console.log("---------------PYTHON_DOC_APP_BUNDLE-------- : " + PYTHON_DOC_APP_BUNDLE);
         RNFetchBlob
@@ -119,11 +119,7 @@ class DocApp extends Component {
         return (
             <View style={styles.container}>
                 <StatusBar hidden={true}></StatusBar>
-                <WebView
-                    ref={WEB_VIEW_REF}
-                    source={ {uri : WEB_ROOT}}
-                    onNavigationStateChange={this.onNavigationStateChange.bind(this)}
-                />
+                <Text>动态更新1.0</Text>
             </View>
         );
     }
