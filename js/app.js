@@ -119,7 +119,11 @@ class DocApp extends Component {
         return (
             <View style={styles.container}>
                 <StatusBar hidden={true}></StatusBar>
-                <Text>动态更新1.0</Text>
+                <WebView
+                    ref={WEB_VIEW_REF}
+                    source={ {uri : WEB_ROOT}}
+                    onNavigationStateChange={this.onNavigationStateChange.bind(this)}
+                />
             </View>
         );
     }
