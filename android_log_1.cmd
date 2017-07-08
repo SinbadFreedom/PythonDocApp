@@ -1,1 +1,0 @@
-adb -d logcat pythondocapp:V *:S
