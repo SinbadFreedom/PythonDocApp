@@ -19,19 +19,20 @@ import {
 import RNFetchBlob from 'react-native-fetch-blob'
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#1FB9FF',
-        borderWidth: 0
-    },
-});
+                                     container: {
+                                         flex: 1,
+                                         backgroundColor: '#1FB9FF',
+                                         borderWidth: 0
+                                     },
+                                 });
 
 const WEB_VIEW_REF = "webView";
 const WEB_ROOT = "http://apetools.cn/html_python/";
 
 const BUNDLE_VERSION = '1.0';
 const APP_PACKAGE_NAME = 'PythonDocApp';
-const PYTHON_DOC_APP_BUNDLE = "http://apetools.cn/bundle/" + APP_PACKAGE_NAME + "/" + Platform.OS + "/" + BUNDLE_VERSION + "/" + "index.android.bundle";
+const PYTHON_DOC_APP_BUNDLE = "http://apetools.cn/bundle/" + APP_PACKAGE_NAME + "/" + Platform.OS + "/" + BUNDLE_VERSION
+                              + "/" + "index.android.bundle";
 
 class DocApp extends Component {
 
@@ -52,10 +53,10 @@ class DocApp extends Component {
         console.log("---------------PYTHON_DOC_APP_BUNDLE-------- : " + PYTHON_DOC_APP_BUNDLE);
         RNFetchBlob
             .config({
-                // response data will be saved to this path if it has access right.
-                fileCache: true,
-                path: dirs
-            })
+                        // response data will be saved to this path if it has access right.
+                        fileCache: true,
+                        path: dirs
+                    })
             .fetch('GET', PYTHON_DOC_APP_BUNDLE, {
                 //some headers ..
             })
@@ -130,8 +131,8 @@ class DocApp extends Component {
 
     onNavigationStateChange(navState) {
         this.setState({
-            backButtonEnabled: navState.canGoBack
-        });
+                          backButtonEnabled: navState.canGoBack
+                      });
     }
 }
 
