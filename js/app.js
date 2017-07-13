@@ -16,21 +16,24 @@ import {
     Platform
 } from 'react-native';
 
-import RNFetchBlob from 'react-native-fetch-blob'
+
+import RNFetchBlob from 'react-native-fetch-blob';
 
 const packageInfo = require("../package.json");
 
+const diff_match_patch = require("./diff_match_patch_uncompressed.js");
+const dmp = new diff_match_patch();
+
+
 const styles = StyleSheet.create({
-                                     container: {
-                                         flex: 1,
-                                         backgroundColor: '#1FB9FF',
-                                         borderWidth: 0
-                                     },
-                                 });
+    container: {
+        flex: 1,
+        backgroundColor: '#1FB9FF',
+        borderWidth: 0
+    },
+});
 
 const WEB_VIEW_REF = "webView";
-const APP_BUNDLE_FILE = "http://apetools.cn/bundle/" + packageInfo.name + "/" + Platform.OS + "/" +
-                        packageInfo.version + "/" + "index.android.bundle";
 
 class DocApp extends Component {
 
@@ -46,26 +49,107 @@ class DocApp extends Component {
             BackHandler.addEventListener('hardwareBackPress', this.backHandler);
             this.requestAndroidPermission();
         }
-        let dirs = RNFetchBlob.fs.dirs.SDCardApplicationDir + '/files/index.android.bundle';
-        console.log("---------------dirs-------- : " + dirs);
-        console.log("---------------APP_BUNDLE_FILE-------- : " + APP_BUNDLE_FILE);
-        RNFetchBlob
-            .config({
-                        // response data will be saved to this path if it has access right.
-                        fileCache: true,
-                        path: dirs
-                    })
-            .fetch('GET', APP_BUNDLE_FILE, {
-                //some headers ..
-            })
-            .then((res) => {
-                // the path should be dirs.DocumentDir + 'path-to-file.anything'
-                console.log('The file saved to ', res.path());
-                this.setState({isLoading: false}, function () {
-                    // do something with new state
-                });
-            })
+        this.loadBundleFileFull();
     }
+
+    loadBundleFileFull = async () => {
+        console.log("-------------------------------------------4");
+        const LOCAL_BUNDLE_FULL = RNFetchBlob.fs.dirs.SDCardApplicationDir + '/files/index.android.bundle_' + packageInfo.version;
+        const LOCAL_BUNDLE_PATH = RNFetchBlob.fs.dirs.SDCardApplicationDir + '/files/index.android.bundle.path_' + packageInfo.version;
+        const SERVER_BUNDLE_FULL = "http://apetools.cn/bundle/" + packageInfo.name + "/" + Platform.OS + "/full/" + packageInfo.version + "/index.android.bundle";
+        const SERVER_BUNDLE_PATH = "http://apetools.cn/bundle/" + packageInfo.name + "/" + Platform.OS + "/path/" + packageInfo.version + "/index.android.bundle";
+        const LOCAL_BUNDLE = RNFetchBlob.fs.dirs.SDCardApplicationDir + '/files/index.android.bundle';
+
+        let oldBundleText = '';
+        /** 没有下载过bundle文件，下载全版本*/
+        await RNFetchBlob.fs.exists(LOCAL_BUNDLE_FULL)
+            .then((exists) => {
+                console.log("-------------------------------------------5");
+                if (exists) {
+                    console.log("loadBundleFileFull exists", exists);
+                    return Promise.resolve();
+                } else {
+                    console.log("loadBundleFileFull !exists", exists);
+                    console.log("SERVER_BUNDLE_FULL", SERVER_BUNDLE_FULL);
+                    console.log("LOCAL_BUNDLE_FULL", LOCAL_BUNDLE_FULL);
+                    return new Promise(function (resolver, reject) {
+                        RNFetchBlob.config({
+                            // response data will be saved to this path if it has access right.
+                            fileCache: true,
+                            path: LOCAL_BUNDLE_FULL
+                        }).fetch('GET', SERVER_BUNDLE_FULL, {
+                            //some headers ..
+                        }).then((res) => {
+                            console.log("-------------------------------------------51");
+                            // the path should be dirs.DocumentDir + 'path-to-file.anything'
+                            //oldBundleText = fs.readFileSync(LOCAL_BUNDLE_FULL, 'utf-8');
+                            //TODO edit oldBundleText
+                            oldBundleText = "";
+                            console.log('loadBundleFileFull saved to ', res.path());
+                            return resolver(true);
+                        }).catch((error) => {
+                            console.log('load SERVER_BUNDLE_FULL error: ', error);
+                            return reject(error);
+                        });
+                    });
+                }
+            }).then(() => {
+                console.log("-------------------------------------------6");
+                return new Promise(function (resolver, reject) {
+                    RNFetchBlob.fs.readFile(LOCAL_BUNDLE_FULL, "utf8")
+                        .then((res) => {
+                            console.log("-------------------------------------------61 res " + res);
+                            return resolver(res);
+                        })
+                        .catch((error) => {
+                            console.log("-------------------------------------------62 error " + error);
+                            return reject();
+                        });
+                });
+            }).then((text) => {
+                console.log("-------------------------------------------7");
+                console.log("text: ", text);
+                oldBundleText = text;
+            }).then(() => {
+                console.log("-------------------------------------------8");
+                /** 下载path*/
+                RNFetchBlob.config({
+                    // response data will be saved to this path if it has access right.
+                    fileCache: true,
+                    path: LOCAL_BUNDLE_PATH
+                }).fetch('GET', SERVER_BUNDLE_PATH, {
+                    //some headers ..
+                }).then((res) => {
+                    console.log("-------------------------------------------9");
+                    console.log('loadBundleFilePath saved to ', res.path());
+                    console.log("LOCAL_BUNDLE_PATH", LOCAL_BUNDLE_PATH);
+                    let patchText = "";
+                    /** merge*/
+                    let patches = dmp.patch_fromText(patchText);
+                    let results = dmp.patch_apply(patches, oldBundleText);
+                    let mergeText = results[0];
+                    console.log("oldBundleText: ", oldBundleText);
+                    console.log("mergeText: ", mergeText);
+                    RNFetchBlob.fs.writeFile(LOCAL_BUNDLE, mergeText, 'utf8"').then(() => {
+                        console.log("-------------------------------------------91");
+                    });
+                }).then((res) => {
+                    console.log("-------------------------------------------10");
+                    console.log("writeFile res", res);
+                    this.setState({isLoading: false}, function () {
+                        // do something with new state
+                    });
+                }).catch((error) => {
+                    console.log('---2 error: ', error);
+                    this.setState({isLoading: false}, function () {
+                        // do something with new state
+                    });
+                });
+            }).catch((error) => {
+                console.log('-----1 catch error: ', error);
+            });
+    };
+
 
     componentWillUnmount() {
         if (Platform.OS === 'android') {
@@ -88,7 +172,7 @@ class DocApp extends Component {
         }
     };
 
-    requestAndroidPermission = async() => {
+    requestAndroidPermission = async () => {
         try {
             const granted = await PermissionsAndroid.request(
                 PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
@@ -120,7 +204,7 @@ class DocApp extends Component {
                 <StatusBar hidden={true}></StatusBar>
                 <WebView
                     ref={WEB_VIEW_REF}
-                    source={ {uri : packageInfo.webRoot}}
+                    source={ {uri: packageInfo.webRoot}}
                     onNavigationStateChange={this.onNavigationStateChange.bind(this)}
                 />
             </View>
@@ -129,8 +213,8 @@ class DocApp extends Component {
 
     onNavigationStateChange(navState) {
         this.setState({
-                          backButtonEnabled: navState.canGoBack
-                      });
+            backButtonEnabled: navState.canGoBack
+        });
     }
 }
 
