@@ -53,24 +53,23 @@ class DocApp extends Component {
     }
 
     loadBundleFileFull = async () => {
-        const LOCAL_BUNDLE_FULL = RNFetchBlob.fs.dirs.SDCardApplicationDir + '/files/index.android.bundle_' + packageInfo.version;
+        const LOCAL_BUNDLE = RNFetchBlob.fs.dirs.SDCardApplicationDir + '/files/index.android.bundle';
         const LOCAL_BUNDLE_PATH = RNFetchBlob.fs.dirs.SDCardApplicationDir + '/files/index.android.bundle.path_' + packageInfo.version;
         const SERVER_BUNDLE_FULL = "http://apetools.cn/bundle/" + packageInfo.name + "/" + Platform.OS + "/full/" + packageInfo.version + "/index.android.bundle";
         const SERVER_BUNDLE_PATH = "http://apetools.cn/bundle/" + packageInfo.name + "/" + Platform.OS + "/path/" + packageInfo.version + "/index.android.bundle";
-        const LOCAL_BUNDLE = RNFetchBlob.fs.dirs.SDCardApplicationDir + '/files/index.android.bundle';
 
         let oldBundleText = '';
         /** 没有下载过bundle文件，下载全版本*/
-        await RNFetchBlob.fs.exists(LOCAL_BUNDLE_FULL)
+        await RNFetchBlob.fs.exists(LOCAL_BUNDLE)
             .then((exists) => {
-                console.log("[ 1 LOCAL_BUNDLE_FULL exists: ]", exists);
+                console.log("[ 1 LOCAL_BUNDLE exists: ]", exists);
                 if (!exists) {
+                    console.log(" 2 LOCAL_BUNDLE", LOCAL_BUNDLE);
                     console.log(" 2 SERVER_BUNDLE_FULL", SERVER_BUNDLE_FULL);
-                    console.log(" 3 LOCAL_BUNDLE_FULL", LOCAL_BUNDLE_FULL);
                     return new Promise(function (resolver, reject) {
                         RNFetchBlob.config({
                             fileCache: true,
-                            path: LOCAL_BUNDLE_FULL
+                            path: LOCAL_BUNDLE
                         }).fetch('GET', SERVER_BUNDLE_FULL, {
                             //some headers ..
                         }).then((res) => {
@@ -84,15 +83,15 @@ class DocApp extends Component {
                     });
                 }
             }).then(() => {
-                console.log("[ 7 read LOCAL_BUNDLE_FULL ]");
+                console.log("[ 7 read LOCAL_BUNDLE ]");
                 return new Promise(function (resolver, reject) {
-                    RNFetchBlob.fs.readFile(LOCAL_BUNDLE_FULL, "utf8")
+                    RNFetchBlob.fs.readFile(LOCAL_BUNDLE, "utf8")
                         .then((res) => {
-                            console.log("[ 8 read LOCAL_BUNDLE_FULL res: ] ", res);
+                            console.log("[ 8 read LOCAL_BUNDLE res: ] ", res);
                             return resolver(res);
                         })
                         .catch((error) => {
-                            console.log("[ 9 read LOCAL_BUNDLE_FULL error: ] ", error);
+                            console.log("[ 9 read LOCAL_BUNDLE error: ] ", error);
                             return reject();
                         });
                 });
