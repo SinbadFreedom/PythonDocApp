@@ -53,7 +53,6 @@ class DocApp extends Component {
     }
 
     loadBundleFileFull = async () => {
-        console.log("-------------------------------------------4");
         const LOCAL_BUNDLE_FULL = RNFetchBlob.fs.dirs.SDCardApplicationDir + '/files/index.android.bundle_' + packageInfo.version;
         const LOCAL_BUNDLE_PATH = RNFetchBlob.fs.dirs.SDCardApplicationDir + '/files/index.android.bundle.path_' + packageInfo.version;
         const SERVER_BUNDLE_FULL = "http://apetools.cn/bundle/" + packageInfo.name + "/" + Platform.OS + "/full/" + packageInfo.version + "/index.android.bundle";
@@ -64,90 +63,95 @@ class DocApp extends Component {
         /** 没有下载过bundle文件，下载全版本*/
         await RNFetchBlob.fs.exists(LOCAL_BUNDLE_FULL)
             .then((exists) => {
-                console.log("-------------------------------------------5");
-                if (exists) {
-                    console.log("loadBundleFileFull exists", exists);
-                    return Promise.resolve();
-                } else {
-                    console.log("loadBundleFileFull !exists", exists);
-                    console.log("SERVER_BUNDLE_FULL", SERVER_BUNDLE_FULL);
-                    console.log("LOCAL_BUNDLE_FULL", LOCAL_BUNDLE_FULL);
+                console.log("[ 1 LOCAL_BUNDLE_FULL exists: ]", exists);
+                if (!exists) {
+                    console.log(" 2 SERVER_BUNDLE_FULL", SERVER_BUNDLE_FULL);
+                    console.log(" 3 LOCAL_BUNDLE_FULL", LOCAL_BUNDLE_FULL);
                     return new Promise(function (resolver, reject) {
                         RNFetchBlob.config({
-                            // response data will be saved to this path if it has access right.
                             fileCache: true,
                             path: LOCAL_BUNDLE_FULL
                         }).fetch('GET', SERVER_BUNDLE_FULL, {
                             //some headers ..
                         }).then((res) => {
-                            console.log("-------------------------------------------51");
-                            // the path should be dirs.DocumentDir + 'path-to-file.anything'
-                            //oldBundleText = fs.readFileSync(LOCAL_BUNDLE_FULL, 'utf-8');
-                            //TODO edit oldBundleText
-                            oldBundleText = "";
-                            console.log('loadBundleFileFull saved to ', res.path());
+                            console.log("[ 4 load SERVER_BUNDLE_FULL ] ", SERVER_BUNDLE_FULL);
+                            console.log('[ 5 load SERVER_BUNDLE_FULL saved to ] ', res.path());
                             return resolver(true);
                         }).catch((error) => {
-                            console.log('load SERVER_BUNDLE_FULL error: ', error);
+                            console.log('[ 6 load SERVER_BUNDLE_FULL error: ] ', error);
                             return reject(error);
                         });
                     });
                 }
             }).then(() => {
-                console.log("-------------------------------------------6");
+                console.log("[ 7 read LOCAL_BUNDLE_FULL ]");
                 return new Promise(function (resolver, reject) {
                     RNFetchBlob.fs.readFile(LOCAL_BUNDLE_FULL, "utf8")
                         .then((res) => {
-                            console.log("-------------------------------------------61 res " + res);
+                            console.log("[ 8 read LOCAL_BUNDLE_FULL res: ] ", res);
                             return resolver(res);
                         })
                         .catch((error) => {
-                            console.log("-------------------------------------------62 error " + error);
+                            console.log("[ 9 read LOCAL_BUNDLE_FULL error: ] ", error);
                             return reject();
                         });
                 });
             }).then((text) => {
-                console.log("-------------------------------------------7");
-                console.log("text: ", text);
                 oldBundleText = text;
-            }).then(() => {
-                console.log("-------------------------------------------8");
+                console.log("[ 10 oldBundleText: ] ", oldBundleText);
+                console.log("[ 11 read SERVER_BUNDLE_PATH : ] ", SERVER_BUNDLE_PATH);
+                console.log("[ 12 save LOCAL_BUNDLE_PATH : ] ", LOCAL_BUNDLE_PATH);
                 /** 下载path*/
-                RNFetchBlob.config({
-                    // response data will be saved to this path if it has access right.
-                    fileCache: true,
-                    path: LOCAL_BUNDLE_PATH
-                }).fetch('GET', SERVER_BUNDLE_PATH, {
-                    //some headers ..
-                }).then((res) => {
-                    console.log("-------------------------------------------9");
-                    console.log('loadBundleFilePath saved to ', res.path());
-                    console.log("LOCAL_BUNDLE_PATH", LOCAL_BUNDLE_PATH);
-                    let patchText = "";
+                return new Promise(function (resolver, reject) {
+                    RNFetchBlob.config({
+                        fileCache: true,
+                        path: LOCAL_BUNDLE_PATH
+                    }).fetch('GET', SERVER_BUNDLE_PATH, {
+                        //some headers ..
+                    }).then((res) => {
+                        console.log(' 13 loadBundleFilePath saved to ', res.path());
+                        RNFetchBlob.fs.readFile(LOCAL_BUNDLE_PATH, "utf8")
+                            .then((bundleFile) => {
+                                console.log(" 14 [readFile LOCAL_BUNDLE_PATH: ] " + bundleFile);
+                                return resolver(bundleFile);
+                            })
+                            .catch((error) => {
+                                console.log("[ 15 readFile LOCAL_BUNDLE_PATH: error ] " + error);
+                                return reject(error);
+                            });
+                    })
+                });
+            }).then((patchText) => {
+                console.log("[ 16 mergePath patchText: ] ", patchText);
+                if (patchText) {
                     /** merge*/
                     let patches = dmp.patch_fromText(patchText);
                     let results = dmp.patch_apply(patches, oldBundleText);
                     let mergeText = results[0];
-                    console.log("oldBundleText: ", oldBundleText);
-                    console.log("mergeText: ", mergeText);
-                    RNFetchBlob.fs.writeFile(LOCAL_BUNDLE, mergeText, 'utf8"').then(() => {
-                        console.log("-------------------------------------------91");
+                    console.log("[ 17 mergePath oldBundleText: ] ", oldBundleText);
+                    console.log("[ 18 mergePath mergeText: ] ", mergeText);
+                    return new Promise(function (resolver, reject) {
+                        RNFetchBlob.fs.writeFile(LOCAL_BUNDLE, mergeText, 'utf8"')
+                            .then(() => {
+                                console.log("[ 19 mergePath patchText OK! ] ");
+                                resolver();
+                            })
+                            .catch((error) => {
+                                console.log("[ 20 mergePath patchText error: ] ", error);
+                                reject(error);
+                            });
                     });
-                }).then((res) => {
-                    console.log("-------------------------------------------10");
-                    console.log("writeFile res", res);
-                    this.setState({isLoading: false}, function () {
-                        // do something with new state
-                    });
-                }).catch((error) => {
-                    console.log('---2 error: ', error);
-                    this.setState({isLoading: false}, function () {
-                        // do something with new state
-                    });
-                });
+                } else {
+                    console.log("[ 21 mergePath patchText null, next step ] ");
+                }
+            }).then(() => {
+                console.log("[ 22 change loading state] ");
+                this.setState({isLoading: false}, function () {
+                })
             }).catch((error) => {
-                console.log('-----1 catch error: ', error);
-            });
+                //TODO error restart
+                console.log('[ 00 catch error: ]', error);
+            })
     };
 
 
