@@ -31,6 +31,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#1FB9FF',
         borderWidth: 0
     },
+    alignCenter: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 8,
+    },
 });
 
 const WEB_VIEW_REF = "webView";
@@ -178,8 +184,8 @@ class DocApp extends Component {
     render() {
         if (this.state.isLoading) {
             return (
-                <View style={{flex: 1, paddingTop: 20}}>
-                    <ActivityIndicator />
+                <View style={styles.alignCenter}>
+                    <ActivityIndicator size="large"/>
                 </View>
             );
         }
