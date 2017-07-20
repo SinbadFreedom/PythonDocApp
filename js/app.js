@@ -24,7 +24,6 @@ const packageInfo = require("../package.json");
 const diff_match_patch = require("./diff_match_patch_uncompressed.js");
 const dmp = new diff_match_patch();
 
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -194,7 +193,7 @@ class DocApp extends Component {
                 <StatusBar hidden={true}></StatusBar>
                 <WebView
                     ref={WEB_VIEW_REF}
-                    source={ {uri: packageInfo.webRoot}}
+                    source={ {uri: packageInfo.webRoot + "/?channel=" + packageInfo.channel}}
                     onNavigationStateChange={this.onNavigationStateChange.bind(this)}
                 />
             </View>

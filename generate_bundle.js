@@ -17,7 +17,7 @@ if (process.argv.length < 3) {
 const isGenerateLatest = process.argv[2];
 
 const packageInfo = require("./package.json");
-const VERSION_ASSETS_DEST_FOLDER = '../BundleFile/' + packageInfo.name + "/android/full/" + packageInfo.version;
+const VERSION_ASSETS_DEST_FOLDER = '../BundleFile/' + packageInfo.name + "/" + packageInfo.channel + "/full/" + packageInfo.version;
 const VERSION_BUNDLE_OUTPUT_FILE = VERSION_ASSETS_DEST_FOLDER + "/index.android.bundle";
 
 function mkdirsSync(dirname) {
@@ -35,8 +35,8 @@ function mkdirsSync(dirname) {
 mkdirsSync(VERSION_ASSETS_DEST_FOLDER);
 
 const cmdStr = "set BABEL_DISABLE_CACHE=1 babel-node script.js && react-native bundle --entry-file index.android.js --bundle-output "
-               + VERSION_BUNDLE_OUTPUT_FILE
-               + " --platform android --assets-dest " + VERSION_ASSETS_DEST_FOLDER + " --dev false";
+    + VERSION_BUNDLE_OUTPUT_FILE
+    + " --platform android --assets-dest " + VERSION_ASSETS_DEST_FOLDER + " --dev false";
 
 console.log("cmdStr: ", cmdStr);
 exec(cmdStr, function (error, stdout, stderr) {
@@ -49,7 +49,7 @@ exec(cmdStr, function (error, stdout, stderr) {
 
 if (isGenerateLatest == 1) {
     /** generate latest bundle file*/
-    const LATEST_ASSETS_DEST_FOLDER = '../BundleFile/' + packageInfo.name + "/android/latest";
+    const LATEST_ASSETS_DEST_FOLDER = '../BundleFile/' + packageInfo.name + "/" + packageInfo.channel + "/latest";
     const LATEST_BUNDLE_OUTPUT_FILE = LATEST_ASSETS_DEST_FOLDER + "/index.android.bundle";
 
     let latestFolderExist = fs.existsSync(LATEST_ASSETS_DEST_FOLDER);
@@ -59,8 +59,8 @@ if (isGenerateLatest == 1) {
 
     /** latest bundle*/
     const cmdStr1 = "set BABEL_DISABLE_CACHE=1 babel-node script.js && react-native bundle --entry-file index.android.js --bundle-output "
-                    + LATEST_BUNDLE_OUTPUT_FILE
-                    + " --platform android --assets-dest " + LATEST_ASSETS_DEST_FOLDER + " --dev false";
+        + LATEST_BUNDLE_OUTPUT_FILE
+        + " --platform android --assets-dest " + LATEST_ASSETS_DEST_FOLDER + " --dev false";
 
     exec(cmdStr1, function (error, stdout, stderr) {
         if (error) {

@@ -20,5 +20,6 @@
   "jest": {
     "preset": "react-native"
   },
-  "webRoot": "http://apetools.cn/html_python/"
+  "webRoot": "http://apetools.cn/html_python/",
+  "channel": "google"
 }
