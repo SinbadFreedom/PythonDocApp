@@ -59,8 +59,8 @@ class DocApp extends Component {
 
     loadBundleFileFull = async () => {
         const LOCAL_BUNDLE = RNFetchBlob.fs.dirs.SDCardApplicationDir + '/files/index.android.bundle';
-        const SERVER_BUNDLE_FULL = "http://apetools.cn/bundle/" + packageInfo.name + "/" + Platform.OS + "/full/" + packageInfo.version + "/index.android.bundle";
-        const SERVER_BUNDLE_PATH = "http://apetools.cn/bundle/" + packageInfo.name + "/" + Platform.OS + "/path/" + packageInfo.version + "/index.android.bundle";
+        const SERVER_BUNDLE_FULL = "http://apetools.cn/bundle/" + packageInfo.name + "/" + packageInfo.channel + "/full/" + packageInfo.version + "/index.android.bundle";
+        const SERVER_BUNDLE_PATH = "http://apetools.cn/bundle/" + packageInfo.name + "/" + packageInfo.channel + "/path/" + packageInfo.version + "/index.android.bundle";
 
         let bundleText = '';
         let pathText = '';
